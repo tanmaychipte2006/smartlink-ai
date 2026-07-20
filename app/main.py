@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from sqlalchemy import text
+from app.routers.users import router as users_router
 
 from app.database.database import Base, engine
 from app.models.user import User
@@ -12,7 +13,7 @@ app = FastAPI(
     version="1.0.0"
 )
 app.include_router(auth_router)
-
+app.include_router(users_router)
 
 @app.get("/")
 def home():
