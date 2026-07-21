@@ -27,3 +27,8 @@ class LinkList(BaseModel):
 
 class LinkUpdate(BaseModel):
     original_url: HttpUrl
+    
+class LinkStats(BaseModel):
+    total_links: int
+    total_clicks: int
+    most_clicked_link: str | None
