@@ -6,11 +6,14 @@ from app.models.link import Link
 from app.schemas.link import (
     LinkCreate,
     LinkResponse,
-    LinkList
+    LinkList,
+    LinkUpdate
 )
+
 from app.utils.generator import generate_short_code
 from app.auth.oauth2 import get_current_user
 from app.models.user import User
+
 
 router = APIRouter(
     prefix="/links",
@@ -88,3 +91,32 @@ def delete_link(
     return {
         "message": "Link deleted successfully"
     }
+@router.put("/{link_id}", response_model=LinkResponse)
+def update_link(
+    link_id: int,
+    updated_link: LinkUpdate,
+    email: str = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+
+    current_user = db.query(User).filter(
+        User.email == email
+    ).first()
+
+    link = db.query(Link).filter(
+        Link.id == link_id,
+        Link.owner_id == current_user.id
+    ).first()
+
+    if not link:
+        raise HTTPException(
+            status_code=404,
+            detail="Link not found"
+        )
+
+    link.original_url = str(updated_link.original_url)
+
+    db.commit()
+    db.refresh(link)
+
+    return link

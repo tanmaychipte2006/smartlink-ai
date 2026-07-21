@@ -24,3 +24,6 @@ class LinkList(BaseModel):
 
     class Config:
         from_attributes = True
+
+class LinkUpdate(BaseModel):
+    original_url: HttpUrl
